@@ -1,0 +1,89 @@
+#!/usr/bin/env ruby
+require 'shellwords'
+require 'mongo'
+
+# Change modes (kinds of changes that can happen to a git-tracked file)
+MODE_ADD    = 'A'
+MODE_MODIFY = 'M'
+MODE_DELETE = 'D'
+
+# This script requires an argument
+if ARGV.empty?
+  puts "Usage: #{File.basename($0)} /path/to/homebrew"
+  exit 1
+end
+
+# Connect to mongo
+mongo = Mongo::Client.new('mongodb://127.0.0.1:27017/ferment')
+Mongo::Logger.logger       = ::Logger.new('mongo.log')
+Mongo::Logger.logger.level = ::Logger::INFO
+
+# Enter Homebrew git directory
+dir = ARGV[0]
+Dir.chdir(dir)
+
+# Pull latest changes from Git
+#system "git pull"
+
+# Create an index on revisions
+mongo[:revisions].indexes.create_one({ :hash => 1 }, :unique => true)
+
+# Get all revisions
+hashes = `git rev-list HEAD`.split(/\s+/).reverse
+
+# Report number of hashes found
+puts "Found #{hashes.size} hashes."
+count = 0
+
+# Iterate through hashes of all commits
+for hash in hashes
+  # Skip this hash if we've seen it before
+  next if mongo[:revisions].find(hash: hash).count > 0
+
+  # Extract detailed changes for this commit
+  changes = `git diff-tree --no-commit-id --name-status -r #{hash.shellescape}`.split("\n")
+
+  # Extract unix timestamp
+  timestamp = `git show -s --format='%at' #{hash.shellescape}`.chomp.to_i
+
+  for change in changes
+    # Extract mode and name from change string
+    # e.g. "M	Library/Formula/harfbuzz.rb"
+    if change =~ /([A-Z]+)\s+Library\/Formula\/(\w+).rb/
+      # Mode is "M" in the example above
+      mode = $1
+
+      # Name is "harfbuzz" in the example above
+      name = $2
+
+      if mode == MODE_ADD
+        # Insert a new formula
+        mongo[:formulae].insert_one({
+          name: name,
+          count: 1,
+          added: timestamp,
+          score: 0
+        })
+      elsif mode == MODE_DELETE
+        # Delete a formula
+        mongo[:formulae].find(:name => name).find_one_and_delete
+      elsif mode == MODE_MODIFY
+        # Modify a formula
+        mongo[:formulae].find(:name => name).update_one("$inc" => { count: 1 })
+      else
+        puts "Unsupported mode '#{mode}' for formula '#{name}'"
+        next
+      end
+    end
+  end
+
+  # Store this revision
+  revision = {
+    hash: hash,
+    changes: changes,
+    timestamp: timestamp
+  }
+
+  # This revision has been digested
+  mongo[:revisions].insert_one(revision)
+end

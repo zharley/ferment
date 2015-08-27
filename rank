@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+require 'shellwords'
+require 'mongo'
+
+# Connect to mongo
+mongo = Mongo::Client.new('mongodb://127.0.0.1:27017/ferment')
+Mongo::Logger.logger       = ::Logger.new('mongo.log')
+Mongo::Logger.logger.level = ::Logger::INFO
+
+# Create an index on the formula's score
+mongo[:formulae].indexes.create_one({ :score => 1 })
+
+# Examine all formulae
+formulae = mongo[:formulae]
+
+now = Time.now.to_i
+day = 60 * 60 * 24
+month = day * 30
+
+formulae.find.each do |formula|
+  # Age in seconds
+  age = now - formula["added"]
+
+  # Calculate age in months
+  age = age / month.to_f
+  
+  score = (formula["count"] - 1) / ((age + 2) ** 1.5)
+
+  formulae.find(:_id => formula["_id"]).update_one("$set" => { :score => score })
+end
+
+formulae = mongo[:formulae].find.sort(:score => -1).limit(100)
+
+formulae.find.each do |formula|
+  age = (now - formula["added"]) / day
+  normalized_score = (formula['score'] * 1000).to_i
+  puts "* #{formula['name']} (days_old=#{age}, commits=#{formula['count']}, score=#{normalized_score})"
+end
