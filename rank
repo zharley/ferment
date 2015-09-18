@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'shellwords'
 require 'mongo'
+require 'uri'
 
 # Connect to mongo
 mongo = Mongo::Client.new('mongodb://127.0.0.1:27017/ferment')
