@@ -1,0 +1,28 @@
+{
+  "name": "ferment",
+  "version": "0.0.1",
+  "description": "Homebrew package discovery by HN-style ranking of commit frequency and age vagrant plugin install vagrant-hostmanager",
+  "main": "index.js",
+  "dependencies": {
+    "hapi": "~10.0.0",
+    "good": "~6.3.0",
+    "good-console": "~5.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zharley/ferment.git"
+  },
+  "keywords": [
+    "homebrew",
+    "git"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zharley/ferment/issues"
+  }
+}
