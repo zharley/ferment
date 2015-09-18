@@ -1,0 +1,23 @@
+#! /bin/bash
+
+# Exit with failure immediately if any command fails
+set -e
+
+# Install Ruby + Mongo + Node + Git
+sudo DEBIAN_FRONTEND=noninteractive \
+     apt-get -y install mongodb npm ruby-dev git-core
+
+# Install gem bindings
+sudo gem install mongo
+
+# Clone the homebrew repo
+git clone https://github.com/Homebrew/homebrew
+
+# Do initial collection and ranking
+/vagrant/collect homebrew
+/vagrant/rank
+
+# Setup app and install dependencies
+cd /vagrant
+npm install
+npm start
