@@ -1,5 +1,8 @@
 var Hapi = require('hapi');
 var Good = require('good');
+var Boom = require('boom');
+var Formula = require('./models').Formula;
+require('./database');
 
 var server = new Hapi.Server();
 server.connection({ port: 3000 });
@@ -8,7 +11,13 @@ server.route({
     method: 'GET',
     path: '/',
     handler: function (request, reply) {
-        reply('Hello, world!');
+        Formula.find({}, function(err, events) {
+            if (!err) {
+                reply(events);
+            } else {
+                reply(Boom.badImplementation(err)); // 500 error
+            }
+        });
     }
 });
 
@@ -16,7 +25,13 @@ server.route({
     method: 'GET',
     path: '/{name}',
     handler: function (request, reply) {
-        reply('Hello, ' + encodeURIComponent(request.params.name) + '!');
+        Formula.find({ name: new RegExp('.*' + request.params.name + '.*')}, function(err, events) {
+            if (!err) {
+                reply(events);
+            } else {
+                reply(Boom.badImplementation(err)); // 500 error
+            }
+        });
     }
 });
 

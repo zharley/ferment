@@ -6,7 +6,9 @@
   "dependencies": {
     "hapi": "~10.0.0",
     "good": "~6.3.0",
-    "good-console": "~5.0.3"
+    "good-console": "~5.0.3",
+    "mongoose": "~4.1.7",
+    "boom": "~2.8.0"
   },
   "devDependencies": {},
   "scripts": {
