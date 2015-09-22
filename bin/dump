@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+
+// Connect to local MongoDB
+var Mongoose = require('mongoose');
+Mongoose.connect('mongodb://localhost/ferment');
+
+// Expect the following Formula model
+var Formula = Mongoose.model('formula', new Mongoose.Schema({
+  name          : { type: String, required: true, trim: true },
+  full_name     : { type: String, required: false, trim: true },
+  description   : { type: String, required: false, trim: true },
+  url           : { type: String, required: false, trim: true },
+  added         : { type: Number, required: true, default: 0 },
+  count         : { type: Number, required: true, default: 0 },
+  score         : { type: Number, required: true, default: 0 }
+}, {
+  collection    : 'formulae'
+}));
+
+// Find all formulae, discarding the unneeded _id field
+Formula.find({}, function(err, formulae) {
+  if (!err) {
+    // Success
+    console.log(JSON.stringify(formulae));
+  }
+  else {
+    // Fail
+    console.err("Failed");
+    process.exit(1);
+  }
+  
+  process.exit();
+}).select('-_id').sort('-score');
