@@ -27,5 +27,5 @@ Vagrant.configure(2) do |config|
   end
 
   # Use shell script for provisioning
-  config.vm.provision "shell", inline: File.read('provision'), privileged: false
+  config.vm.provision "shell", inline: File.read('bin/provision'), privileged: false
 end
