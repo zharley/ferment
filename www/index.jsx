@@ -40,8 +40,7 @@ var FormulaTable = React.createClass({
 var SearchBar = React.createClass({
     handleChange: function() {
         this.props.onUserInput(
-            this.refs.filterTextInput.getDOMNode().value,
-            this.refs.inStockOnlyInput.getDOMNode().checked
+            this.refs.filterText.getDOMNode().value
         );
     },
     render: function() {
@@ -51,7 +50,7 @@ var SearchBar = React.createClass({
                     type="text"
                     placeholder="Search..."
                     value={this.props.filterText}
-                    ref="filterTextInput"
+                    ref="filterText"
                     onChange={this.handleChange}
                 />
             </form>
@@ -63,7 +62,6 @@ var FilterableFormulaTable = React.createClass({
     getInitialState: function() {
         return {
             filterText: '',
-            inStockOnly: false,
 	    formulae: []
         };
     },
@@ -80,23 +78,22 @@ var FilterableFormulaTable = React.createClass({
 
     handleUserInput: function(filterText, inStockOnly) {
         this.setState({
-            filterText: filterText,
-            inStockOnly: inStockOnly
+            filterText: filterText
         });
     },
 
     render: function() {
         return (
             <div>
+	        <h1>Fermenting Brews</h1>
+
 		<SearchBar
 		    filterText={this.state.filterText}
-		    inStockOnly={this.state.inStockOnly}
 		    onUserInput={this.handleUserInput}
 		/>
 		<FormulaTable
 		    formulae={this.state.formulae}
 		    filterText={this.state.filterText}
-		    inStockOnly={this.state.inStockOnly}
 		/>
             </div>
         );
