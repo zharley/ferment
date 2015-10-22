@@ -2,3 +2,4 @@ mongo.log
 .vagrant
 node_modules
 homebrew
+dist
