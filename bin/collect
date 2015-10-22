@@ -89,27 +89,3 @@ for hash in hashes
   # This revision has been digested
   mongo[:revisions].insert_one(revision)
 end
-
-# Update all formula meta-data
-formulae = mongo[:formulae]
-
-puts "Updating metadata"
-formulae.find.each do |formula|
-  # Request brew info
-  meta = `./bin/brew info --json=v1 #{formula['name'].shellescape}`
-
-  # Extract meta-data
-  json = JSON.parse(meta)
-
-  if json.is_a?(Array)
-    json = json.first
-  end
-
-  puts json["full_name"]
-
-  formulae.find(:_id => formula["_id"]).update_one("$set" => { 
-    :full_name   => json["full_name"],
-    :description => json["desc"],
-    :url         => json["homepage"]
-  })
-end
