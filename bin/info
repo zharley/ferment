@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+require 'shellwords'
+require 'mongo'
+require 'json'
+require 'uri'
+
+def extract_meta(text, key)
+  result = nil
+  if text =~ /\s+#{key}\s+"(.+)"\s*$/
+    result = $1
+  end
+  result
+end
+
+# This script requires an argument
+if ARGV.empty?
+  puts "Usage: #{File.basename($0)} /path/to/homebrew"
+  exit 1
+end
+
+# Enter Homebrew git directory
+dir = ARGV[0]
+Dir.chdir(File.join(dir, "Library", "Formula"))
+
+# Connect to mongo
+mongo = Mongo::Client.new('mongodb://127.0.0.1:27017/ferment')
+Mongo::Logger.logger       = ::Logger.new('mongo.log')
+Mongo::Logger.logger.level = ::Logger::INFO
+
+# Update all formula meta-data
+formulae = mongo[:formulae]
+
+puts "Updating metadata"
+formulae.find.each do |formula|
+  # Load the specified formula rb file
+  ruby_file = formula["name"] + '.rb'
+
+  contents = File.read(ruby_file)
+
+  formulae.find(:_id => formula["_id"]).update_one("$set" => { 
+    :description => extract_meta(contents, "desc"),
+    :url         => extract_meta(contents, "homepage")
+  })
+end
