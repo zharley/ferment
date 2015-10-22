@@ -3,21 +3,39 @@
 # Exit with failure immediately if any command fails
 set -e
 
-# Install Ruby + Mongo + Node + Git
+# Install Ruby + Mongo + Npm + Node + Git
 sudo DEBIAN_FRONTEND=noninteractive \
      apt-get -y install mongodb npm ruby-dev git-core
 
 # Install gem bindings
 sudo gem install mongo
 
-# Clone the homebrew repo
-git clone https://github.com/Homebrew/homebrew
+# Install required global npm packages
+sudo npm install -g gulp
 
-# Do initial collection and ranking
-/vagrant/collect homebrew
-/vagrant/rank
-
-# Setup app and install dependencies
+# Install npm dependencies and run first time
 cd /vagrant
-npm install
-npm start
+su vagrant -c "npm install && gulp"
+
+# Install basic nginx site file
+cat << EOF | sudo tee /etc/nginx/sites-available/default
+server {
+  server_name localhost;
+  listen 80 default_server;
+  listen [::]:80 default_server ipv6only=on;
+  root /vagrant/dist;
+  index index.html;
+  location / {
+    try_files \$uri \$uri/ =404;
+  }
+}
+EOF
+
+# Install an hourly cron job to run gulp
+cat << EOF | sudo tee /etc/cron.hourly/ferment
+#!/bin/sh
+test -x /usr/local/bin/gulp || exit 0
+cd /vagrant
+su vagrant -c "/usr/local/bin/gulp"
+EOF
+sudo chmod +x /etc/cron.hourly/ferment
