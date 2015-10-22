@@ -2,15 +2,15 @@
   "name": "ferment",
   "version": "0.0.1",
   "description": "Homebrew package discovery by HN-style ranking of commit frequency and age vagrant plugin install vagrant-hostmanager",
-  "main": "index.js",
+  "main": "",
   "dependencies": {
-    "hapi": "~10.0.0",
-    "good": "~6.3.0",
-    "good-console": "~5.0.3",
-    "mongoose": "~4.1.7",
-    "boom": "~2.8.0"
+    "gulp-git": "^1.6.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-react": "^3.1.0",
+    "gulp-shell": "^0.5.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
