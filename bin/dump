@@ -7,7 +7,6 @@ Mongoose.connect('mongodb://localhost/ferment');
 // Expect the following Formula model
 var Formula = Mongoose.model('formula', new Mongoose.Schema({
   name          : { type: String, required: true, trim: true },
-  full_name     : { type: String, required: false, trim: true },
   description   : { type: String, required: false, trim: true },
   url           : { type: String, required: false, trim: true },
   added         : { type: Number, required: true, default: 0 },
