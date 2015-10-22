@@ -20,6 +20,10 @@ gulp.task('collect', shell.task([
   './bin/collect homebrew'
 ]));
 
+gulp.task('info', shell.task([
+  './bin/info homebrew'
+]));
+
 gulp.task('rank', shell.task([
   './bin/rank'
 ]));
@@ -33,7 +37,7 @@ gulp.task('copy', function () {
     .pipe(gulp.dest('dist'))
 })
  
-gulp.task('default', [ 'brew', 'collect', 'rank', 'dump', 'copy' ], function () {
+gulp.task('default', [ 'brew', 'collect', 'info', 'rank', 'dump', 'copy' ], function () {
   return gulp.src('src/index.js')
     .pipe(react())
     .pipe(gulp.dest('dist'));
