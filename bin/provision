@@ -5,17 +5,16 @@ set -e
 
 # Install Ruby + Mongo + Npm + Node + Git
 sudo DEBIAN_FRONTEND=noninteractive \
-     apt-get -y install mongodb npm ruby-dev git-core
+     apt-get -y install mongodb npm ruby-dev git-core nginx
+
+# Use "node" command with nodejs (required to disambiguate node packages)
+sudo update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 
 # Install gem bindings
 sudo gem install mongo
 
 # Install required global npm packages
 sudo npm install -g gulp
-
-# Install npm dependencies and run first time
-cd /vagrant
-su vagrant -c "npm install && gulp"
 
 # Install basic nginx site file
 cat << EOF | sudo tee /etc/nginx/sites-available/default
@@ -30,6 +29,7 @@ server {
   }
 }
 EOF
+sudo /etc/init.d/nginx reload
 
 # Install an hourly cron job to run gulp
 cat << EOF | sudo tee /etc/cron.hourly/ferment
@@ -39,3 +39,10 @@ cd /vagrant
 su vagrant -c "/usr/local/bin/gulp"
 EOF
 sudo chmod +x /etc/cron.hourly/ferment
+
+# As unprivileged user, install local npm dependencies
+cd /vagrant
+npm install
+
+# As unprivileged user, run default gulp task
+gulp
