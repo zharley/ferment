@@ -29,7 +29,7 @@ gulp.task('rank', shell.task([
 ]));
 
 gulp.task('dump', shell.task([
-  './bin/dump > dist/formulae.json'
+  './bin/dump > dist/data.json'
 ]));
 
 gulp.task('copy', function () {

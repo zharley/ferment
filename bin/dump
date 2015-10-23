@@ -20,7 +20,11 @@ var Formula = Mongoose.model('formula', new Mongoose.Schema({
 Formula.find({}, function(err, formulae) {
   if (!err) {
     // Success
-    console.log(JSON.stringify(formulae));
+    var result = {
+      last_updated: new Date(),
+      formulae: formulae
+    };
+    console.log(JSON.stringify(result))
   }
   else {
     // Fail

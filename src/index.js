@@ -62,6 +62,7 @@ var FilterableFormulaTable = React.createClass({
     getInitialState: function() {
         return {
             filterText: '',
+	    lastUpdated: undefined,
 	    formulae: []
         };
     },
@@ -70,7 +71,8 @@ var FilterableFormulaTable = React.createClass({
       $.get(this.props.source, function(result) {
 	if (this.isMounted()) {
 	  this.setState({
-	    formulae: result
+	    formulae: result.formulae,
+	    lastUpdated: result.last_updated
 	  });
 	}
       }.bind(this), "json");
@@ -100,5 +102,5 @@ var FilterableFormulaTable = React.createClass({
     }
 });
 
-SOURCE = "formulae.json";
+SOURCE = "data.json";
 React.render(<FilterableFormulaTable source={SOURCE} />, document.body);
