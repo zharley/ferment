@@ -4,7 +4,8 @@
   "description": "Homebrew package discovery by HN-style ranking of commit frequency and age vagrant plugin install vagrant-hostmanager",
   "main": "",
   "dependencies": {
-    "gulp-git": "^1.6.0"
+    "gulp-git": "^1.6.0",
+    "react": "^0.14.0"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
