@@ -35,10 +35,14 @@ formulae.find.each do |formula|
   # Load the specified formula rb file
   ruby_file = formula["name"] + '.rb'
 
-  contents = File.read(ruby_file)
+  if File.exist?(ruby_file)
+    contents = File.read(ruby_file)
 
-  formulae.find(:_id => formula["_id"]).update_one("$set" => { 
-    :description => extract_meta(contents, "desc"),
-    :url         => extract_meta(contents, "homepage")
-  })
+    formulae.find(:_id => formula["_id"]).update_one("$set" => { 
+      :description => extract_meta(contents, "desc"),
+      :url         => extract_meta(contents, "homepage")
+    })
+  else
+    puts "=> Warning: Couldn't find #{ruby_file}"
+  end
 end
