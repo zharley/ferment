@@ -38,7 +38,7 @@ gulp.task('copy', function () {
 })
 
 gulp.task('react', function () {
-  return gulp.src('src/index.js')
+  return gulp.src('src/main.js')
     .pipe(react())
     .pipe(gulp.dest('dist'));
 })

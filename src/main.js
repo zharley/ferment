@@ -5,7 +5,7 @@ var FormulaRow = React.createClass({
             <tr>
                 <td>{Math.round(formula.score * 1000)}</td>
                 <td><a href={formula.url}>{formula.name}</a></td>
-                <td>{formula.description}</td>
+                <td style={{wordBreak: 'break-word'}}>{formula.description}</td>
             </tr>
         );
     }
@@ -62,8 +62,8 @@ var FilterableFormulaTable = React.createClass({
     getInitialState: function() {
         return {
             filterText: '',
-	    lastUpdated: undefined,
-	    formulae: []
+	    formulae: [],
+	    lastUpdated: null
         };
     },
     
@@ -88,6 +88,7 @@ var FilterableFormulaTable = React.createClass({
         return (
             <div>
 	        <h1>Fermenting Brews</h1>
+		<p>Last updated: {this.state.lastUpdated}</p>
 
 		<SearchBar
 		    filterText={this.state.filterText}
