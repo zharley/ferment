@@ -36,9 +36,12 @@ gulp.task('copy', function () {
   return gulp.src('src/index.html')
     .pipe(gulp.dest('dist'))
 })
- 
-gulp.task('default', [ 'brew', 'collect', 'info', 'rank', 'dump', 'copy' ], function () {
+
+gulp.task('react', function () {
   return gulp.src('src/index.js')
     .pipe(react())
     .pipe(gulp.dest('dist'));
+})
+ 
+gulp.task('default', [ 'brew', 'collect', 'info', 'rank', 'dump', 'copy', 'react' ], function () {
 });
